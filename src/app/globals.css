@@ -1,0 +1,312 @@
+@import 'tailwindcss';
+
+/*
+ * SubsCheck - Neo-Brutalist Receipt Design System
+ *
+ * コンセプト: レシートのようなモノスペース・ミニマルなデザインに
+ * ネオブルータリズムの力強いコントラストと遊び心を加える
+ */
+
+@theme {
+  /* カラーパレット - モノクロベース + アクセント */
+  --color-paper: #FDFCFB;
+  --color-paper-aged: #F5F3EF;
+  --color-ink: #1A1A1A;
+  --color-ink-light: #4A4A4A;
+  --color-ink-faded: #8A8A8A;
+  --color-highlight: #FFE066;
+  --color-highlight-strong: #FFC800;
+  --color-accent-red: #E53935;
+  --color-accent-green: #43A047;
+  --color-border: #2A2A2A;
+  --color-shadow: #0A0A0A;
+
+  /* フォント */
+  --font-receipt: 'JetBrains Mono', 'Fira Code', 'SF Mono', ui-monospace, monospace;
+  --font-display: 'Bebas Neue', 'Impact', sans-serif;
+  --font-body: 'DM Sans', 'Helvetica Neue', system-ui, sans-serif;
+
+  /* サイズ */
+  --spacing-receipt: 1.5rem;
+  --border-receipt: 3px;
+  --shadow-brutal: 4px 4px 0px var(--color-shadow);
+  --shadow-brutal-sm: 2px 2px 0px var(--color-shadow);
+  --shadow-brutal-lg: 6px 6px 0px var(--color-shadow);
+
+  /* アニメーション */
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-snap: cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+/* カスタムユーティリティ */
+@utility shadow-brutal {
+  box-shadow: var(--shadow-brutal);
+}
+
+@utility shadow-brutal-sm {
+  box-shadow: var(--shadow-brutal-sm);
+}
+
+@utility shadow-brutal-lg {
+  box-shadow: var(--shadow-brutal-lg);
+}
+
+@utility border-brutal {
+  border: var(--border-receipt) solid var(--color-border);
+}
+
+@utility font-receipt {
+  font-family: var(--font-receipt);
+}
+
+@utility font-display {
+  font-family: var(--font-display);
+}
+
+@utility bg-paper {
+  background-color: var(--color-paper);
+}
+
+@utility bg-paper-aged {
+  background-color: var(--color-paper-aged);
+}
+
+@utility text-ink {
+  color: var(--color-ink);
+}
+
+@utility text-ink-light {
+  color: var(--color-ink-light);
+}
+
+@utility text-ink-faded {
+  color: var(--color-ink-faded);
+}
+
+@utility bg-highlight {
+  background-color: var(--color-highlight);
+}
+
+@utility bg-highlight-strong {
+  background-color: var(--color-highlight-strong);
+}
+
+/* ベーススタイル */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font-body);
+  background-color: var(--color-paper-aged);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  min-height: 100dvh;
+  line-height: 1.6;
+}
+
+/* WHY: ボタンと入力要素のデフォルトカーソルを明示的に設定 */
+button,
+[type='button'],
+[type='submit'],
+[role='button'] {
+  cursor: pointer;
+}
+
+input,
+select,
+textarea {
+  cursor: text;
+}
+
+input[type='number'],
+input[type='checkbox'],
+input[type='radio'] {
+  cursor: pointer;
+}
+
+/* レシート風の破線 */
+.receipt-divider {
+  border: none;
+  border-top: 2px dashed var(--color-ink-faded);
+  margin: 1rem 0;
+}
+
+/* レシート風のドット線 */
+.receipt-dots {
+  background-image: radial-gradient(circle, var(--color-ink-faded) 1px, transparent 1px);
+  background-size: 8px 8px;
+  height: 8px;
+  margin: 1rem 0;
+}
+
+/* タグのアニメーション */
+@keyframes tag-pop {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes tag-select {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes price-update {
+  0% {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes stamp {
+  0% {
+    transform: scale(2) rotate(-15deg);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(0.9) rotate(-8deg);
+  }
+  100% {
+    transform: scale(1) rotate(-5deg);
+    opacity: 1;
+  }
+}
+
+@keyframes tooltip-pop {
+  0% {
+    transform: translateX(-50%) translateY(5px) scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(-50%) translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-tag-pop {
+  animation: tag-pop 0.3s var(--ease-bounce) forwards;
+}
+
+.animate-tooltip-pop {
+  animation: tooltip-pop 0.15s var(--ease-snap) forwards;
+}
+
+.animate-tag-select {
+  animation: tag-select 0.15s var(--ease-snap);
+}
+
+.animate-price-update {
+  animation: price-update 0.3s var(--ease-bounce);
+}
+
+.animate-stamp {
+  animation: stamp 0.4s var(--ease-bounce) forwards;
+}
+
+/* ホバーエフェクト */
+.hover-lift {
+  transition: transform 0.15s var(--ease-snap), box-shadow 0.15s var(--ease-snap);
+}
+
+.hover-lift:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px var(--color-shadow);
+}
+
+.hover-lift:active {
+  transform: translate(0, 0);
+  box-shadow: var(--shadow-brutal-sm);
+}
+
+/* レシート紙のテクスチャ */
+.paper-texture {
+  background-image:
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-blend-mode: soft-light;
+  background-size: 150px;
+}
+
+/* セレクションスタイル */
+::selection {
+  background-color: var(--color-highlight);
+  color: var(--color-ink);
+}
+
+/* フォーカススタイル */
+:focus-visible {
+  outline: 3px solid var(--color-ink);
+  outline-offset: 2px;
+}
+
+/* スクロールバー */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-paper-aged);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-ink-faded);
+  border: 2px solid var(--color-paper-aged);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-ink-light);
+}
+
+/* カテゴリカラー */
+.category-video {
+  --category-color: #E53935;
+}
+
+.category-music {
+  --category-color: #1DB954;
+}
+
+.category-software {
+  --category-color: #0078D4;
+}
+
+.category-other {
+  --category-color: #7C4DFF;
+}
+
+.category-custom {
+  --category-color: #FF6F00;
+}
