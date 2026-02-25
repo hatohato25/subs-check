@@ -179,24 +179,6 @@ subs-check/
 
 このプロジェクトは[MITライセンス](LICENSE)の下で公開されています。
 
-## 貢献
-
-Issue や Pull Request は歓迎します。
-
-1. このリポジトリをフォーク
-2. フィーチャーブランチを作成 (`git checkout -b feature/amazing-feature`)
-3. 変更をコミット (`git commit -m 'feat: Add amazing feature'`)
-4. ブランチにプッシュ (`git push origin feature/amazing-feature`)
-5. Pull Requestを作成
-
-## 開発者
-
-開発に関する詳細情報は、以下のドキュメントを参照してください:
-
-- [要件定義書](.claude/requirements.md)
-- [設計書](.claude/design.md)
-- [実装計画書](.claude/tasks.md)
-
 ## 謝辞
 
 - アイコン: 各サービスのfavicon
