@@ -196,8 +196,8 @@ export default function HomePage() {
                 <div
                   id={`category-${category}`}
                   className={cn(
-                    'overflow-hidden transition-all duration-300',
-                    isExpanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'
+                    'transition-all duration-300',
+                    isExpanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
                   )}
                 >
                   <div className="flex flex-wrap gap-2">

@@ -2,6 +2,7 @@
 
 import { Check } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { SubscriptionIcon } from '@/components/ui/SubscriptionIcon';
 import { formatPrice } from '@/lib/format';
 import { cn } from '@/lib/utils';
@@ -25,6 +26,10 @@ export function SubscriptionTag({ subscription, isSelected, onToggle, index }: P
   const [showTooltip, setShowTooltip] = useState(false);
   // delayタイマー管理
   const tooltipTimerRef = useRef<NodeJS.Timeout | null>(null);
+  // WHY: ツールチップの位置計算のために、ボタン要素への参照を保持
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  // WHY: ツールチップの位置情報
+  const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
 
   const handleClick = () => {
     onToggle(subscription.id);
@@ -40,6 +45,17 @@ export function SubscriptionTag({ subscription, isSelected, onToggle, index }: P
   // tooltip表示のハンドリング（300ms delay）
   const handleMouseEnter = () => {
     tooltipTimerRef.current = setTimeout(() => {
+      // WHY: ツールチップを表示する前に、ボタンの位置を計算
+      // position: fixedを使用するため、ビューポート座標をそのまま使用（scrollYは不要）
+      if (buttonRef.current) {
+        const rect = buttonRef.current.getBoundingClientRect();
+        setTooltipPosition({
+          // WHY: タグの上端のビューポート座標（fixedなのでscrollY不要）
+          top: rect.top,
+          // WHY: タグの左端を基準に配置
+          left: rect.left,
+        });
+      }
       setShowTooltip(true);
     }, 300);
   };
@@ -62,13 +78,15 @@ export function SubscriptionTag({ subscription, isSelected, onToggle, index }: P
   }, []);
 
   return (
-    <button
-      type="button"
-      onClick={handleClick}
-      onKeyDown={handleKeyDown}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      className={cn(
+    <>
+      <button
+        ref={buttonRef}
+        type="button"
+        onClick={handleClick}
+        onKeyDown={handleKeyDown}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        className={cn(
         // ベーススタイル
         'group relative flex items-center gap-2 px-3 py-2',
         'font-receipt text-sm',
@@ -136,33 +154,42 @@ export function SubscriptionTag({ subscription, isSelected, onToggle, index }: P
           <Check className="w-3 h-3 text-ink" strokeWidth={3} />
         </span>
       )}
+      </button>
 
-      {/* Tooltip */}
-      {showTooltip && (
-        <span
-          className={cn(
-            'absolute bottom-full left-1/2 -translate-x-1/2 mb-2',
-            'px-3 py-2 min-w-max max-w-xs',
-            'bg-ink text-paper',
-            'border-brutal rounded-sm shadow-brutal',
-            'font-receipt text-xs',
-            'pointer-events-none',
-            'z-50',
-            'animate-tooltip-pop'
-          )}
-          role="tooltip"
-        >
-          {/* Tooltip矢印 */}
-          <span
-            className="absolute top-full left-1/2 -translate-x-1/2 -mt-px w-0 h-0 border-4 border-transparent border-t-ink"
-            aria-hidden="true"
-          />
-          <div className="font-bold mb-1">{subscription.name}</div>
-          {subscription.description && (
-            <div className="text-paper/80 text-xs">{subscription.description}</div>
-          )}
-        </span>
-      )}
-    </button>
+      {/* Tooltip - Portal化して確実に表示 */}
+      {showTooltip &&
+        typeof window !== 'undefined' &&
+        createPortal(
+          <div
+            className={cn(
+              'fixed px-3 py-2 min-w-max max-w-xs',
+              'bg-ink text-paper',
+              'border-brutal rounded-sm shadow-brutal',
+              'font-receipt text-xs',
+              'pointer-events-none',
+              'z-[9999]',
+              'animate-tooltip-pop'
+            )}
+            style={{
+              // WHY: bottomを使用してビューポートの下からの位置を指定
+              // ビューポート高さ - タグ上端位置 + 8pxマージン = タグの上に配置
+              bottom: `calc(100vh - ${tooltipPosition.top}px + 8px)`,
+              left: `${tooltipPosition.left}px`,
+            }}
+            role="tooltip"
+          >
+            {/* Tooltip矢印 - タグの左側を指す */}
+            <span
+              className="absolute top-full left-4 -mt-px w-0 h-0 border-4 border-transparent border-t-ink"
+              aria-hidden="true"
+            />
+            <div className="font-bold mb-1">{subscription.name}</div>
+            {subscription.description && (
+              <div className="text-paper/80 text-xs">{subscription.description}</div>
+            )}
+          </div>,
+          document.body
+        )}
+    </>
   );
 }
