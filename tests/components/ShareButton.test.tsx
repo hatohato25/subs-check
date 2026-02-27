@@ -1,8 +1,9 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { describe, expect, it, vi, beforeEach, type Mock } from 'vitest';
+import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { ShareButton } from '@/components/features/ShareButton';
 import type { Subscription } from '@/types/subscription';
+import { render } from '../test-utils';
 
 // WHY: modern-screenshotのモック
 // テスト環境ではDOM操作による画像生成は不要なので、Blobを直接返す

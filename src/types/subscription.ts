@@ -25,8 +25,16 @@ export type Subscription = {
   fallbackIcon: string;
   /** ブランドカラー（HEX形式） */
   color: string;
-  /** 備考・主な特徴 */
+  /** 備考・主な特徴（日本語） */
   description?: string;
+  /** プラン名（日本語） */
+  planJa?: string;
+  /** プラン名（英語） */
+  planEn?: string;
+  /** 月額料金（USD）。Japan-exclusiveの場合はnull */
+  priceUsd?: number | null;
+  /** 備考・主な特徴（英語） */
+  descriptionEn?: string;
 };
 
 /**

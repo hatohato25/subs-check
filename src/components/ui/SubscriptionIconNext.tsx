@@ -1,5 +1,3 @@
-'use client';
-
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
@@ -27,9 +25,9 @@ const sizeMap: Record<Size, { pixels: number; emoji: string }> = {
 /**
  * サブスクリプションアイコンコンポーネント（Next.js Image版）
  *
- * WHY: Next.js Image コンポーネントを使用するバージョン
+ * WHY: Server Componentとして動作させることで、初回表示時のハイドレーション遅延を回避
  *      画像の最適化が必要な箇所（TotalDisplay、シェアページ）で使用
- *      画像読み込みエラー時は自動的にフォールバック絵文字を表示
+ *      画像パスの存在チェックでフォールバック絵文字を表示
  */
 export function SubscriptionIconNext({
   icon,
@@ -41,8 +39,7 @@ export function SubscriptionIconNext({
   const { pixels, emoji } = sizeMap[size];
 
   // WHY: icon が指定されており、かつ '/' で始まる場合のみ画像を表示
-  //      Next.js Image は onError でのフォールバックが難しいため、
-  //      画像パスの存在チェックで判定
+  //      画像パスの存在チェックで判定（Server Componentでは onError が使えないため）
   if (icon?.startsWith('/')) {
     return (
       <Image
@@ -51,6 +48,8 @@ export function SubscriptionIconNext({
         width={pixels}
         height={pixels}
         className={cn('object-contain', className)}
+        // WHY: 初回表示を高速化するため、優先度を上げる
+        priority
       />
     );
   }

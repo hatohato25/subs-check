@@ -3,7 +3,9 @@
 import { domToBlob } from 'modern-screenshot';
 import { Camera, Check, Download, Loader2, Share2 } from 'lucide-react';
 import { useCallback, useState } from 'react';
+import { useLocale } from '@/contexts/LocaleContext';
 import { formatPrice } from '@/lib/format';
+import { t } from '@/lib/i18n/translations';
 import { generateShareUrl } from '@/lib/share';
 import { cn } from '@/lib/utils';
 import type { Subscription } from '@/types/subscription';
@@ -43,15 +45,28 @@ async function captureReceiptImage(element: HTMLDivElement): Promise<Blob> {
 /**
  * シェアテキストを生成
  */
-function generateShareText(subscriptions: Subscription[], total: number): string {
+function generateShareText(
+  subscriptions: Subscription[],
+  total: number,
+  locale: 'ja' | 'en'
+): string {
   const subscriptionList = subscriptions
     .slice(0, 5)
-    .map((s) => `${s.fallbackIcon} ${s.name}`)
+    .map((s) => `${s.fallbackIcon} ${locale === 'en' ? s.nameEn : s.name}`)
     .join('\n');
 
-  const moreText = subscriptions.length > 5 ? `\n...他${subscriptions.length - 5}件` : '';
+  const remainingCount = subscriptions.length - 5;
+  const moreText =
+    subscriptions.length > 5
+      ? locale === 'en'
+        ? `\n...+${remainingCount} more`
+        : `\n...他${remainingCount}件`
+      : '';
 
-  return `私の月額サブスク合計は${formatPrice(total)}でした！\n\n${subscriptionList}${moreText}\n\n#SubsCheck`;
+  const formattedTotal = formatPrice(total, locale);
+  const translations = t(locale);
+
+  return translations.shareText.template(formattedTotal, subscriptionList, moreText);
 }
 
 /**
@@ -76,7 +91,9 @@ function downloadBlob(blob: Blob, filename: string) {
  *      画像をダウンロードしてからX投稿画面を開く
  */
 export function ShareButton({ selectedSubscriptions, total, receiptRef }: Props) {
+  const { locale } = useLocale();
   const [state, setState] = useState<ShareState>('idle');
+  const translations = t(locale);
 
   const isDisabled = selectedSubscriptions.length === 0;
 
@@ -143,12 +160,13 @@ export function ShareButton({ selectedSubscriptions, total, receiptRef }: Props)
       downloadBlob(blob, `subscheck-receipt-${Date.now()}.png`);
 
       // 2. X（Twitter）のWeb Intentを開く
-      const shareText = generateShareText(selectedSubscriptions, total);
+      const shareText = generateShareText(selectedSubscriptions, total, locale);
       const shareData = {
         selectedIds: selectedSubscriptions.map((s) => s.id),
         totalPrice: total,
       };
-      const shareUrl = generateShareUrl(shareData);
+      const baseShareUrl = generateShareUrl(shareData);
+      const shareUrl = `${baseShareUrl}?lang=${locale}`;
 
       const twitterUrl = new URL('https://twitter.com/intent/tweet');
       twitterUrl.searchParams.set('text', shareText);
@@ -161,7 +179,7 @@ export function ShareButton({ selectedSubscriptions, total, receiptRef }: Props)
       setState('error');
       setTimeout(() => setState('idle'), 2000);
     }
-  }, [isDisabled, receiptRef, selectedSubscriptions, total]);
+  }, [isDisabled, receiptRef, selectedSubscriptions, total, locale]);
 
   /**
    * リンクをクリップボードにコピー
@@ -176,7 +194,8 @@ export function ShareButton({ selectedSubscriptions, total, receiptRef }: Props)
         selectedIds: selectedSubscriptions.map((s) => s.id),
         totalPrice: total,
       };
-      const shareUrl = generateShareUrl(shareData);
+      const baseShareUrl = generateShareUrl(shareData);
+      const shareUrl = `${baseShareUrl}?lang=${locale}`;
 
       await navigator.clipboard.writeText(shareUrl);
       setState('copied');
@@ -186,7 +205,7 @@ export function ShareButton({ selectedSubscriptions, total, receiptRef }: Props)
       setState('error');
       setTimeout(() => setState('idle'), 2000);
     }
-  }, [isDisabled, selectedSubscriptions, total]);
+  }, [isDisabled, selectedSubscriptions, total, locale]);
 
   return (
     <div className="flex flex-col sm:flex-row gap-3">
@@ -196,19 +215,19 @@ export function ShareButton({ selectedSubscriptions, total, receiptRef }: Props)
         onClick={handleDownloadImage}
         disabled={isDisabled || state === 'loading'}
         className={cn(lightButtonClasses(state === 'downloaded'))}
-        aria-label="レシート画像をダウンロード"
+        aria-label={translations.shareButton.ariaDownload}
       >
         {state === 'loading' ? (
           <Loader2 className="w-5 h-5 animate-spin" />
         ) : state === 'downloaded' ? (
           <>
             <Check className="w-5 h-5" />
-            <span className="hidden sm:inline">ダウンロード済み</span>
+            <span className="hidden sm:inline">{translations.shareButton.downloaded}</span>
           </>
         ) : (
           <>
             <Download className="w-5 h-5" />
-            <span className="hidden sm:inline">画像をダウンロード</span>
+            <span className="hidden sm:inline">{translations.shareButton.downloadImage}</span>
           </>
         )}
       </button>
@@ -219,14 +238,14 @@ export function ShareButton({ selectedSubscriptions, total, receiptRef }: Props)
         onClick={handleShare}
         disabled={isDisabled || state === 'loading'}
         className={cn(darkButtonClasses)}
-        aria-label="Xでシェア（画像付き）"
+        aria-label={translations.shareButton.ariaShare}
       >
         {state === 'loading' ? (
           <Loader2 className="w-5 h-5 animate-spin" />
         ) : (
           <>
             <Camera className="w-5 h-5" />
-            Xでシェア
+            {translations.shareButton.shareOnX}
           </>
         )}
       </button>
@@ -237,19 +256,19 @@ export function ShareButton({ selectedSubscriptions, total, receiptRef }: Props)
         onClick={handleCopyLink}
         disabled={isDisabled || state === 'loading'}
         className={cn(lightButtonClasses(state === 'copied'))}
-        aria-label="シェアリンクをコピー"
+        aria-label={translations.shareButton.ariaCopyLink}
       >
         {state === 'loading' ? (
           <Loader2 className="w-5 h-5 animate-spin" />
         ) : state === 'copied' ? (
           <>
             <Check className="w-5 h-5" />
-            <span className="hidden sm:inline">コピー済み</span>
+            <span className="hidden sm:inline">{translations.shareButton.copied}</span>
           </>
         ) : (
           <>
             <Share2 className="w-5 h-5" />
-            <span className="hidden sm:inline">リンクコピー</span>
+            <span className="hidden sm:inline">{translations.shareButton.copyLink}</span>
           </>
         )}
       </button>

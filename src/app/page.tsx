@@ -6,6 +6,8 @@ import { CustomSubscriptionForm } from '@/components/features/CustomSubscription
 import { ShareButton } from '@/components/features/ShareButton';
 import { SubscriptionTag } from '@/components/features/SubscriptionTag';
 import { TotalDisplay } from '@/components/features/TotalDisplay';
+import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
+import { useLocale } from '@/contexts/LocaleContext';
 import { useSubscriptions } from '@/hooks/useSubscriptions';
 import { cn } from '@/lib/utils';
 
@@ -14,33 +16,34 @@ import { cn } from '@/lib/utils';
  */
 const CATEGORY_CONFIG = {
   video: {
-    label: '動画配信',
+    label: { ja: '動画配信', en: 'Video Streaming' },
     icon: '📺',
     className: 'category-video',
   },
   music: {
-    label: '音楽配信',
+    label: { ja: '音楽配信', en: 'Music Streaming' },
     icon: '🎵',
     className: 'category-music',
   },
   software: {
-    label: 'ソフトウェア',
+    label: { ja: 'ソフトウェア', en: 'Software' },
     icon: '💻',
     className: 'category-software',
   },
   other: {
-    label: 'その他',
+    label: { ja: 'その他', en: 'Other' },
     icon: '📦',
     className: 'category-other',
   },
   custom: {
-    label: 'カスタム',
+    label: { ja: 'カスタム', en: 'Custom' },
     icon: '✨',
     className: 'category-custom',
   },
 } as const;
 
 export default function HomePage() {
+  const { locale } = useLocale();
   const {
     isHydrated,
     subscriptionsByCategory,
@@ -95,21 +98,29 @@ export default function HomePage() {
               <h1 className="font-display text-3xl sm:text-4xl tracking-wider text-ink">
                 SUBSCHECK
               </h1>
-              <p className="font-receipt text-xs text-ink-faded mt-1">あなたのサブスク、いくら？</p>
+              <p className="font-receipt text-xs text-ink-faded mt-1">
+                {locale === 'ja' ? 'あなたのサブスク、いくら？' : 'How much do you spend?'}
+              </p>
             </div>
-            {/* 選択数バッジ */}
-            {selectedCount > 0 && (
-              <div
-                className={cn(
-                  'px-3 py-1',
-                  'bg-highlight border-2 border-ink rounded-full',
-                  'font-receipt text-sm font-bold',
-                  'animate-tag-pop'
-                )}
-              >
-                {selectedCount} 件選択中
-              </div>
-            )}
+
+            <div className="flex items-center gap-3">
+              {/* 言語切り替え */}
+              <LanguageSwitcher />
+
+              {/* 選択数バッジ */}
+              {selectedCount > 0 && (
+                <div
+                  className={cn(
+                    'px-3 py-1',
+                    'bg-highlight border-2 border-ink rounded-full',
+                    'font-receipt text-sm font-bold',
+                    'animate-tag-pop'
+                  )}
+                >
+                  {locale === 'ja' ? `${selectedCount} 件選択中` : `${selectedCount} selected`}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </header>
@@ -161,7 +172,9 @@ export default function HomePage() {
                   </span>
 
                   {/* カテゴリ名 */}
-                  <h2 className="font-display text-2xl tracking-wide text-ink">{config.label}</h2>
+                  <h2 className="font-display text-2xl tracking-wide text-ink">
+                    {config.label[locale]}
+                  </h2>
 
                   {/* 選択中の件数バッジ */}
                   {selectedInCategory > 0 && (

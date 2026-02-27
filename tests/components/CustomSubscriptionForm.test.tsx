@@ -2,12 +2,18 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { CustomSubscriptionForm } from '@/components/features/CustomSubscriptionForm';
+import { LocaleProvider } from '@/contexts/LocaleContext';
 import type { CustomSubscription } from '@/types/subscription';
+
+// WHY: LocaleProvider でラップするヘルパー関数
+const renderWithLocale = (ui: React.ReactElement) => {
+  return render(<LocaleProvider>{ui}</LocaleProvider>);
+};
 
 describe('CustomSubscriptionForm', () => {
   it('should render add button initially', () => {
     const mockOnAdd = vi.fn();
-    render(<CustomSubscriptionForm onAdd={mockOnAdd} />);
+    renderWithLocale(<CustomSubscriptionForm onAdd={mockOnAdd} />);
 
     expect(screen.getByText('カスタムサブスクを追加')).toBeInTheDocument();
   });
@@ -16,7 +22,7 @@ describe('CustomSubscriptionForm', () => {
     const user = userEvent.setup();
     const mockOnAdd = vi.fn();
 
-    render(<CustomSubscriptionForm onAdd={mockOnAdd} />);
+    renderWithLocale(<CustomSubscriptionForm onAdd={mockOnAdd} />);
 
     const addButton = screen.getByText('カスタムサブスクを追加');
     await user.click(addButton);
@@ -31,7 +37,7 @@ describe('CustomSubscriptionForm', () => {
     const user = userEvent.setup();
     const mockOnAdd = vi.fn();
 
-    render(<CustomSubscriptionForm onAdd={mockOnAdd} />);
+    renderWithLocale(<CustomSubscriptionForm onAdd={mockOnAdd} />);
 
     // フォームを開く
     await user.click(screen.getByText('カスタムサブスクを追加'));
@@ -49,7 +55,7 @@ describe('CustomSubscriptionForm', () => {
     const user = userEvent.setup();
     const mockOnAdd = vi.fn();
 
-    render(<CustomSubscriptionForm onAdd={mockOnAdd} />);
+    renderWithLocale(<CustomSubscriptionForm onAdd={mockOnAdd} />);
 
     // フォームを開く
     await user.click(screen.getByText('カスタムサブスクを追加'));
@@ -75,7 +81,7 @@ describe('CustomSubscriptionForm', () => {
     const user = userEvent.setup();
     const mockOnAdd = vi.fn();
 
-    render(<CustomSubscriptionForm onAdd={mockOnAdd} />);
+    renderWithLocale(<CustomSubscriptionForm onAdd={mockOnAdd} />);
 
     // フォームを開く
     await user.click(screen.getByText('カスタムサブスクを追加'));
@@ -100,7 +106,7 @@ describe('CustomSubscriptionForm', () => {
     const user = userEvent.setup();
     const mockOnAdd = vi.fn();
 
-    render(<CustomSubscriptionForm onAdd={mockOnAdd} />);
+    renderWithLocale(<CustomSubscriptionForm onAdd={mockOnAdd} />);
 
     await user.click(screen.getByText('カスタムサブスクを追加'));
 
@@ -124,7 +130,7 @@ describe('CustomSubscriptionForm', () => {
     const user = userEvent.setup();
     const mockOnAdd = vi.fn();
 
-    render(<CustomSubscriptionForm onAdd={mockOnAdd} />);
+    renderWithLocale(<CustomSubscriptionForm onAdd={mockOnAdd} />);
 
     await user.click(screen.getByText('カスタムサブスクを追加'));
 
@@ -148,7 +154,7 @@ describe('CustomSubscriptionForm', () => {
     const user = userEvent.setup();
     const mockOnAdd = vi.fn();
 
-    render(<CustomSubscriptionForm onAdd={mockOnAdd} />);
+    renderWithLocale(<CustomSubscriptionForm onAdd={mockOnAdd} />);
 
     await user.click(screen.getByText('カスタムサブスクを追加'));
 
@@ -188,7 +194,7 @@ describe('CustomSubscriptionForm', () => {
     const user = userEvent.setup();
     const mockOnAdd = vi.fn();
 
-    render(<CustomSubscriptionForm onAdd={mockOnAdd} />);
+    renderWithLocale(<CustomSubscriptionForm onAdd={mockOnAdd} />);
 
     await user.click(screen.getByText('カスタムサブスクを追加'));
 
@@ -216,7 +222,7 @@ describe('CustomSubscriptionForm', () => {
     const user = userEvent.setup();
     const mockOnAdd = vi.fn();
 
-    render(<CustomSubscriptionForm onAdd={mockOnAdd} />);
+    renderWithLocale(<CustomSubscriptionForm onAdd={mockOnAdd} />);
 
     await user.click(screen.getByText('カスタムサブスクを追加'));
 
@@ -240,7 +246,7 @@ describe('CustomSubscriptionForm', () => {
     const user = userEvent.setup();
     const mockOnAdd = vi.fn();
 
-    render(<CustomSubscriptionForm onAdd={mockOnAdd} />);
+    renderWithLocale(<CustomSubscriptionForm onAdd={mockOnAdd} />);
 
     await user.click(screen.getByText('カスタムサブスクを追加'));
 
@@ -271,7 +277,7 @@ describe('CustomSubscriptionForm', () => {
     const user = userEvent.setup();
     const mockOnAdd = vi.fn();
 
-    render(<CustomSubscriptionForm onAdd={mockOnAdd} />);
+    renderWithLocale(<CustomSubscriptionForm onAdd={mockOnAdd} />);
 
     // 1回目の追加
     await user.click(screen.getByText('カスタムサブスクを追加'));
@@ -304,7 +310,7 @@ describe('CustomSubscriptionForm', () => {
     const user = userEvent.setup();
     const mockOnAdd = vi.fn();
 
-    render(<CustomSubscriptionForm onAdd={mockOnAdd} />);
+    renderWithLocale(<CustomSubscriptionForm onAdd={mockOnAdd} />);
 
     await user.click(screen.getByText('カスタムサブスクを追加'));
 

@@ -1,8 +1,9 @@
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SubscriptionTag } from '@/components/features/SubscriptionTag';
 import type { Subscription } from '@/types/subscription';
+import { render } from '../test-utils';
 
 describe('SubscriptionTag', () => {
   const mockSubscription: Subscription = {

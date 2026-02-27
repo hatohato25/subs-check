@@ -1,7 +1,8 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { TotalDisplay } from '@/components/features/TotalDisplay';
 import type { Subscription } from '@/types/subscription';
+import { render } from '../test-utils';
 
 describe('TotalDisplay', () => {
   const mockSubscriptions: Subscription[] = [

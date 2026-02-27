@@ -1,7 +1,8 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { describe, expect, it, vi, beforeEach, type Mock } from 'vitest';
 import { ShareButton } from '@/components/features/ShareButton';
 import type { Subscription } from '@/types/subscription';
+import { render } from '../test-utils';
 
 // WHY: modern-screenshotのモック
 vi.mock('modern-screenshot', () => ({

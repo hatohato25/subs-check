@@ -2,6 +2,7 @@
 
 import { forwardRef, useEffect, useRef, useState } from 'react';
 import { SubscriptionIconNext } from '@/components/ui/SubscriptionIconNext';
+import { useLocale } from '@/contexts/LocaleContext';
 import { formatPrice } from '@/lib/format';
 import { getUniqueIcons } from '@/lib/subscription-utils';
 import { cn } from '@/lib/utils';
@@ -21,6 +22,7 @@ type Props = {
  */
 export const TotalDisplay = forwardRef<HTMLDivElement, Props>(
   ({ total, selectedCount, selectedSubscriptions }, ref) => {
+    const { locale } = useLocale();
     const [isAnimating, setIsAnimating] = useState(false);
     const [displayTotal, setDisplayTotal] = useState(total);
     const prevTotalRef = useRef(total);
@@ -60,7 +62,7 @@ export const TotalDisplay = forwardRef<HTMLDivElement, Props>(
         <div className="text-center mb-4">
           <h2 className="font-display text-3xl tracking-wider text-ink">RECEIPT</h2>
           <p className="font-receipt text-xs text-ink-faded mt-1">
-            {new Date().toLocaleDateString('ja-JP', {
+            {new Date().toLocaleDateString(locale === 'ja' ? 'ja-JP' : 'en-US', {
               year: 'numeric',
               month: '2-digit',
               day: '2-digit',
@@ -73,8 +75,12 @@ export const TotalDisplay = forwardRef<HTMLDivElement, Props>(
         {/* サブスク数とアイコン */}
         <div className="mb-4">
           <div className="flex justify-between items-center font-receipt text-sm mb-2">
-            <span className="text-ink-light">選択中のサブスク</span>
-            <span className="font-bold text-ink">{selectedCount} 件</span>
+            <span className="text-ink-light">
+              {locale === 'ja' ? '選択中のサブスク' : 'Selected subscriptions'}
+            </span>
+            <span className="font-bold text-ink">
+              {selectedCount} {locale === 'ja' ? '件' : selectedCount === 1 ? 'item' : 'items'}
+            </span>
           </div>
 
           {/* アイコン一覧 */}
@@ -111,7 +117,9 @@ export const TotalDisplay = forwardRef<HTMLDivElement, Props>(
         {/* 月額合計 */}
         <div className="mb-2">
           <div className="flex justify-between items-baseline">
-            <span className="font-receipt text-sm text-ink-light">月額合計</span>
+            <span className="font-receipt text-sm text-ink-light">
+              {locale === 'ja' ? '月額合計' : 'Monthly Total'}
+            </span>
             <span
               className={cn(
                 'font-display text-5xl tracking-tight text-ink',
@@ -120,29 +128,31 @@ export const TotalDisplay = forwardRef<HTMLDivElement, Props>(
                 !isAnimating && 'animate-price-update'
               )}
             >
-              {formatPrice(displayTotal)}
+              {formatPrice(displayTotal, locale)}
             </span>
           </div>
-          <p className="text-right font-receipt text-xs text-ink-faded mt-1">/月（税込）</p>
+          <p className="text-right font-receipt text-xs text-ink-faded mt-1">
+            {locale === 'ja' ? '/月（税込）' : 'per month'}
+          </p>
         </div>
 
         <hr className="receipt-divider" />
 
         {/* 年額換算 */}
         <div className="flex justify-between items-center font-receipt text-sm">
-          <span className="text-ink-light">年額換算</span>
+          <span className="text-ink-light">{locale === 'ja' ? '年額換算' : 'Annual Total'}</span>
           <span
             className={cn(
               'font-bold tabular-nums',
-              yearlyTotal > 100000 ? 'text-accent-red' : 'text-ink'
+              yearlyTotal > (locale === 'ja' ? 100000 : 1000) ? 'text-accent-red' : 'text-ink'
             )}
           >
-            {formatPrice(yearlyTotal)}
+            {formatPrice(yearlyTotal, locale)}
           </span>
         </div>
 
         {/* 警告メッセージ（高額時） */}
-        {yearlyTotal > 50000 && (
+        {yearlyTotal > (locale === 'ja' ? 50000 : 500) && (
           <div
             className={cn(
               'mt-4 p-3 rounded-sm',
@@ -152,15 +162,22 @@ export const TotalDisplay = forwardRef<HTMLDivElement, Props>(
             )}
             style={{ transformOrigin: 'center center' }}
           >
-            <span className="font-bold">⚠ CAUTION:</span> 年間 {formatPrice(yearlyTotal)} の出費です
+            <span className="font-bold">⚠ CAUTION:</span>{' '}
+            {locale === 'ja'
+              ? `年間 ${formatPrice(yearlyTotal, locale)} の出費です`
+              : `You spend ${formatPrice(yearlyTotal, locale)} per year`}
           </div>
         )}
 
         {/* 空の状態 */}
         {selectedCount === 0 && (
           <div className="mt-4 text-center">
-            <p className="font-receipt text-sm text-ink-faded">サブスクを選択してください</p>
-            <p className="font-receipt text-xs text-ink-faded mt-1">↓ 下のタグをタップ ↓</p>
+            <p className="font-receipt text-sm text-ink-faded">
+              {locale === 'ja' ? 'サブスクを選択してください' : 'Select subscriptions below'}
+            </p>
+            <p className="font-receipt text-xs text-ink-faded mt-1">
+              {locale === 'ja' ? '↓ 下のタグをタップ ↓' : '↓ Tap the tags below ↓'}
+            </p>
           </div>
         )}
       </div>

@@ -1,18 +1,24 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { CustomSubscriptionForm } from '@/components/features/CustomSubscriptionForm';
+import { LocaleProvider } from '@/contexts/LocaleContext';
+
+// WHY: LocaleProvider でラップするヘルパー関数
+const renderWithLocale = (ui: React.ReactElement) => {
+  return render(<LocaleProvider>{ui}</LocaleProvider>);
+};
 
 describe('CustomSubscriptionForm - Simple Tests', () => {
   it('should render add button initially', () => {
     const mockOnAdd = vi.fn();
-    render(<CustomSubscriptionForm onAdd={mockOnAdd} />);
+    renderWithLocale(<CustomSubscriptionForm onAdd={mockOnAdd} />);
 
     expect(screen.getByText('カスタムサブスクを追加')).toBeInTheDocument();
   });
 
   it('should show form elements', async () => {
     const mockOnAdd = vi.fn();
-    const { getByText } = render(<CustomSubscriptionForm onAdd={mockOnAdd} />);
+    const { getByText } = renderWithLocale(<CustomSubscriptionForm onAdd={mockOnAdd} />);
 
     const addButton = getByText('カスタムサブスクを追加');
     addButton.click();

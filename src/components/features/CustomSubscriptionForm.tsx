@@ -2,6 +2,7 @@
 
 import { Plus, X } from 'lucide-react';
 import { useState } from 'react';
+import { useLocale } from '@/contexts/LocaleContext';
 import { cn } from '@/lib/utils';
 import type { CustomSubscription } from '@/types/subscription';
 
@@ -18,6 +19,7 @@ const EMOJI_OPTIONS = ['📱', '💻', '🎮', '📚', '🏋️', '🍔', '☕',
  * 一覧にないサブスクを手動で追加できる
  */
 export function CustomSubscriptionForm({ onAdd }: Props) {
+  const { locale } = useLocale();
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
@@ -31,18 +33,24 @@ export function CustomSubscriptionForm({ onAdd }: Props) {
     // バリデーション
     const trimmedName = name.trim();
     if (!trimmedName) {
-      setError('サービス名を入力してください');
+      setError(
+        locale === 'ja' ? 'サービス名を入力してください' : 'Please enter a service name'
+      );
       return;
     }
 
     const parsedPrice = Number.parseInt(price, 10);
     if (Number.isNaN(parsedPrice) || parsedPrice <= 0) {
-      setError('有効な金額を入力してください');
+      setError(locale === 'ja' ? '有効な金額を入力してください' : 'Please enter a valid amount');
       return;
     }
 
     if (parsedPrice > 999999) {
-      setError('金額は999,999円以下で入力してください');
+      setError(
+        locale === 'ja'
+          ? '金額は999,999円以下で入力してください'
+          : 'Please enter an amount of 999,999 or less'
+      );
       return;
     }
 
@@ -83,7 +91,7 @@ export function CustomSubscriptionForm({ onAdd }: Props) {
         )}
       >
         <Plus className="w-4 h-4" />
-        カスタムサブスクを追加
+        {locale === 'ja' ? 'カスタムサブスクを追加' : 'Add Custom Subscription'}
       </button>
     );
   }
@@ -99,7 +107,7 @@ export function CustomSubscriptionForm({ onAdd }: Props) {
           type="button"
           onClick={() => setIsOpen(false)}
           className="p-1 hover:bg-paper-aged rounded-sm transition-colors cursor-pointer"
-          aria-label="閉じる"
+          aria-label={locale === 'ja' ? '閉じる' : 'Close'}
         >
           <X className="w-5 h-5 text-ink" />
         </button>
@@ -114,8 +122,14 @@ export function CustomSubscriptionForm({ onAdd }: Props) {
 
       {/* アイコン選択 */}
       <fieldset className="mb-4">
-        <legend className="block font-receipt text-xs text-ink-faded mb-2">アイコン</legend>
-        <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="アイコン選択">
+        <legend className="block font-receipt text-xs text-ink-faded mb-2">
+          {locale === 'ja' ? 'アイコン' : 'Icon'}
+        </legend>
+        <div
+          className="flex flex-wrap gap-2"
+          role="radiogroup"
+          aria-label={locale === 'ja' ? 'アイコン選択' : 'Icon selection'}
+        >
           {EMOJI_OPTIONS.map((e) => (
             <button
               key={e}
@@ -140,14 +154,14 @@ export function CustomSubscriptionForm({ onAdd }: Props) {
       {/* サービス名 */}
       <div className="mb-4">
         <label htmlFor="custom-name" className="block font-receipt text-xs text-ink-faded mb-2">
-          サービス名
+          {locale === 'ja' ? 'サービス名' : 'Service Name'}
         </label>
         <input
           id="custom-name"
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="例: ChatGPT Plus"
+          placeholder={locale === 'ja' ? '例: ChatGPT Plus' : 'e.g. ChatGPT Plus'}
           className={cn(
             'w-full px-3 py-2',
             'font-receipt text-sm',
@@ -162,11 +176,11 @@ export function CustomSubscriptionForm({ onAdd }: Props) {
       {/* 月額料金 */}
       <div className="mb-4">
         <label htmlFor="custom-price" className="block font-receipt text-xs text-ink-faded mb-2">
-          月額料金（円）
+          {locale === 'ja' ? '月額料金（円）' : 'Monthly Price (USD)'}
         </label>
         <div className="relative">
           <span className="absolute left-3 top-1/2 -translate-y-1/2 font-receipt text-ink-faded">
-            ¥
+            {locale === 'ja' ? '¥' : '$'}
           </span>
           <input
             id="custom-price"
@@ -174,7 +188,7 @@ export function CustomSubscriptionForm({ onAdd }: Props) {
             inputMode="numeric"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
-            placeholder="0"
+            placeholder={locale === 'ja' ? '980' : '9.99'}
             className={cn(
               'w-full pl-8 pr-3 py-2',
               'font-receipt text-sm',
@@ -205,7 +219,7 @@ export function CustomSubscriptionForm({ onAdd }: Props) {
           'cursor-pointer'
         )}
       >
-        追加する
+        {locale === 'ja' ? '追加する' : 'Add'}
       </button>
     </form>
   );

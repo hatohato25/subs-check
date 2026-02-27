@@ -1,7 +1,8 @@
-import { act, renderHook, waitFor } from '@testing-library/react';
+import { act, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useSubscriptions } from '@/hooks/useSubscriptions';
 import { clearAllData } from '@/lib/storage';
+import { renderHook } from '../test-utils';
 
 describe('useSubscriptions', () => {
   beforeEach(() => {

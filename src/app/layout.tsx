@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Bebas_Neue, DM_Sans, JetBrains_Mono } from 'next/font/google';
+import { LocaleProvider } from '@/contexts/LocaleContext';
+import Script from 'next/script';
 import './globals.css';
 
 const jetbrainsMono = JetBrains_Mono({
@@ -51,7 +53,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="ja"
       className={`${jetbrainsMono.variable} ${bebasNeue.variable} ${dmSans.variable}`}
     >
-      <body className="bg-paper-aged text-ink antialiased">{children}</body>
+      <body className="bg-paper-aged text-ink antialiased">
+        <LocaleProvider>{children}</LocaleProvider>
+        {/* Google Analytics */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-R45DR4T0L3"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-R45DR4T0L3');
+          `}
+        </Script>
+      </body>
     </html>
   );
 }
