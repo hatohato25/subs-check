@@ -87,8 +87,9 @@ function downloadBlob(blob: Blob, filename: string) {
  * シェアボタンコンポーネント
  *
  * RECEIPTコンポーネントのスクリーンショットを撮影し、X（Twitter）にシェアする
- * WHY: X Web Intentは画像の直接添付をサポートしていないため、
- *      画像をダウンロードしてからX投稿画面を開く
+ * - 画像ダウンロード: ダウンロードボタンで画像を保存
+ * - Xでシェア: Twitter Intentを開いてテキストとURLを共有
+ * - リンクコピー: 共有URLをクリップボードにコピー
  */
 export function ShareButton({ selectedSubscriptions, total, receiptRef }: Props) {
   const { locale } = useLocale();
@@ -146,20 +147,16 @@ export function ShareButton({ selectedSubscriptions, total, receiptRef }: Props)
 
   /**
    * シェア処理
-   * WHY: X Web Intentは画像の直接添付をサポートしていないため、
-   *      画像をダウンロードしてからX投稿画面を開く
+   * WHY: Twitter Intentを開くのみ
+   *      画像のダウンロードは専用のダウンロードボタンで行う
    */
   const handleShare = useCallback(async () => {
-    if (isDisabled || !receiptRef.current) return;
+    if (isDisabled) return;
 
     setState('loading');
 
     try {
-      // 1. 画像をキャプチャしてダウンロード
-      const blob = await captureReceiptImage(receiptRef.current);
-      downloadBlob(blob, `subscheck-receipt-${Date.now()}.png`);
-
-      // 2. X（Twitter）のWeb Intentを開く
+      // X（Twitter）のWeb Intentを開く
       const shareText = generateShareText(selectedSubscriptions, total, locale);
       const shareData = {
         selectedIds: selectedSubscriptions.map((s) => s.id),
@@ -179,7 +176,7 @@ export function ShareButton({ selectedSubscriptions, total, receiptRef }: Props)
       setState('error');
       setTimeout(() => setState('idle'), 2000);
     }
-  }, [isDisabled, receiptRef, selectedSubscriptions, total, locale]);
+  }, [isDisabled, selectedSubscriptions, total, locale]);
 
   /**
    * リンクをクリップボードにコピー
