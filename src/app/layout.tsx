@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Bebas_Neue, DM_Sans, JetBrains_Mono } from 'next/font/google';
 import { LocaleProvider } from '@/contexts/LocaleContext';
 import Script from 'next/script';
+import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
 
 const jetbrainsMono = JetBrains_Mono({
@@ -55,6 +56,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <body className="bg-paper-aged text-ink antialiased">
         <LocaleProvider>{children}</LocaleProvider>
+        <Analytics />
         {/* Google Analytics */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-R45DR4T0L3"
