@@ -99,7 +99,12 @@ export function CustomSubscriptionForm({ onAdd }: Props) {
   return (
     <form
       onSubmit={handleSubmit}
-      className={cn('bg-paper border-brutal rounded-sm', 'shadow-brutal p-4', 'animate-tag-pop')}
+      className={cn(
+        'w-full', // WHY: flexコンテナ内で常に100%幅を取り、新しい行に配置される
+        'bg-paper border-brutal rounded-sm',
+        'shadow-brutal p-4',
+        'animate-fade-in'
+      )}
     >
       <div className="flex justify-between items-center mb-4">
         <h3 className="font-display text-xl tracking-wide text-ink">ADD CUSTOM</h3>

@@ -89,13 +89,25 @@ export function SubscriptionTag({ subscription, isSelected, onToggle, index }: P
     setShowTooltip(false);
   };
 
-  // クリーンアップ: コンポーネントアンマウント時にタイマーをクリア
+  // WHY: タグのアニメーション制御。初回マウント時のみアニメーションを実行する
+  // アニメーションが終了したらクラスを削除して、意図しない再実行を防ぐ
+  const [shouldAnimate, setShouldAnimate] = useState(true);
+
   useEffect(() => {
+    // WHY: アニメーションが終わった後にクラスを削除（300msはアニメーションの長さ + delay）
+    const animationDuration = 300 + index * 30; // animationDelayを考慮
+    const timer = setTimeout(() => {
+      setShouldAnimate(false);
+    }, animationDuration);
+
     return () => {
+      clearTimeout(timer);
       if (tooltipTimerRef.current) {
         clearTimeout(tooltipTimerRef.current);
       }
     };
+    // WHY: indexは変わらないプロパティだが、初回マウント時の値を使用するため依存配列に含める
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -114,7 +126,10 @@ export function SubscriptionTag({ subscription, isSelected, onToggle, index }: P
           'border-brutal rounded-sm',
           'transition-all duration-150',
           'cursor-pointer select-none',
-          'animate-tag-pop',
+          // WHY: flexコンテナ内でサイズが変わらないようにする
+          'flex-shrink-0',
+          // WHY: 初回マウント時のみアニメーションを実行
+          shouldAnimate && 'animate-tag-pop',
           // 非選択時
           !isSelected && [
             'bg-paper text-ink-light',

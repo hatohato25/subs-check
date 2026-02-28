@@ -159,6 +159,21 @@ input[type='radio'] {
   }
 }
 
+/* WHY: アニメーション適用時に他の要素に影響を与えないように、transformを分離 */
+@keyframes tag-pop-isolated {
+  0% {
+    transform: scale(0.8) translateZ(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05) translateZ(0);
+  }
+  100% {
+    transform: scale(1) translateZ(0);
+    opacity: 1;
+  }
+}
+
 @keyframes tag-select {
   0% {
     transform: scale(1);
@@ -216,8 +231,23 @@ input[type='radio'] {
   }
 }
 
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 .animate-tag-pop {
   animation: tag-pop 0.3s var(--ease-bounce) forwards;
+  /* WHY: アニメーション実行後は transform を維持し、再実行を防ぐ */
+  animation-fill-mode: forwards;
+  /* WHY: GPUアクセラレーションを有効化して、他の要素への影響を最小化 */
+  will-change: transform, opacity;
+  /* WHY: スケール変換の中心を明示的に指定 */
+  transform-origin: center center;
 }
 
 .animate-tooltip-pop {
@@ -234,6 +264,10 @@ input[type='radio'] {
 
 .animate-stamp {
   animation: stamp 0.4s var(--ease-bounce) forwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out forwards;
 }
 
 /* ホバーエフェクト */
